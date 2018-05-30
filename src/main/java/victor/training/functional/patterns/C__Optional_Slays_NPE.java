@@ -17,7 +17,7 @@ import lombok.Data;
 class DiscountService {
 	public String getDiscountLine(Customer customer) {
 		return customer.getMemberCard()
-				.map(card -> getApplicableDiscountPercentage(card))
+				.flatMap(card -> getApplicableDiscountPercentage(card))
 				.map(d -> "Discount%: " + d)
 				.orElse("");
 	}
