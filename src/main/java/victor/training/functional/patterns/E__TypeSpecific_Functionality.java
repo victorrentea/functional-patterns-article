@@ -19,8 +19,8 @@ class Movie {
 			return days * 2;
 		case CHILDREN:
 			return 5;
+		default: throw new IllegalArgumentException();
 		}
-		return 0; // ?!.. Free!! Deducted from your salary!
 	}
 }
 
