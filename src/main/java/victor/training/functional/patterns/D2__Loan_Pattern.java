@@ -22,7 +22,7 @@ class OrderExporter {
 	
 	private OrderRepo repo;
 			
-	public File exportFile(String fileName) {
+	public File exportFile(String fileName) throws Exception {
 		File file = new File("export/" + fileName);
 		try (Writer writer = new FileWriter(file)) {
 			writer.write("OrderID;Date\n");
