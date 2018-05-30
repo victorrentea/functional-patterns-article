@@ -15,12 +15,9 @@ import lombok.Data;
 
 class DiscountService {
 	public String getDiscountLine(Customer customer) {
-		Optional<Object> discount = getApplicableDiscountPercentage(customer.getMemberCard());
-		if (discount.isPresent()) {
-			return "Discount%: " + discount;
-		} else {
-			return "";
-		}
+		return getApplicableDiscountPercentage(customer.getMemberCard())
+				.map(d -> "Discount%: " + d)
+				.orElse("");
 	}
 		
 	private Optional<Object> getApplicableDiscountPercentage(MemberCard card) { 
