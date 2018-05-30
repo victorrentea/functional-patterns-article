@@ -3,21 +3,31 @@ package victor.training.functional.patterns;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.function.BiFunction;
+
 import victor.training.functional.patterns.Movie.Type;
 
 class Movie {
+	
 	enum Type {
-		REGULAR, NEW_RELEASE, CHILDREN
+		REGULAR(PriceService::computeRegularPrice) , 
+		NEW_RELEASE(PriceService::computeNewReleasePrice) , 
+		CHILDREN(PriceService::computeChildrenPrice)
+		;
+		public final BiFunction<PriceService, Integer, Integer> priceAlgo;
+
+		private Type(BiFunction<PriceService, Integer, Integer> priceAlgo) {
+			this.priceAlgo = priceAlgo;
+		}
 	}
-
+	
 	private final Type type;
-
+	
 	public Movie(Type type) {
 		this.type = type;
 	}
 
 }
-
 interface NewReleasePriceRepo {
 	double getFactor(); // will return that silly 2
 }
@@ -30,7 +40,7 @@ class PriceService {
 	}
 	int computeNewReleasePrice(int days) {
 		return (int) (days * repo.getFactor());
-	} 
+	}
 	int computeRegularPrice(int days) {
 		return days + 1;
 	}
@@ -38,12 +48,7 @@ class PriceService {
 		return 5;
 	}
 	public int computePrice(Movie.Type type, int days) {
-		switch (type) {
-		case REGULAR: return computeRegularPrice(days);
-		case NEW_RELEASE: return computeNewReleasePrice(days);
-		case CHILDREN: return computeChildrenPrice(days);
-		default: throw new IllegalArgumentException();
-		}
+		return type.priceAlgo.apply(this, days);
 	}
 }
 
