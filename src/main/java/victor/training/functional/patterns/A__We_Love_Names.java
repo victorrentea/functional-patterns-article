@@ -15,15 +15,15 @@ class UserFacade {
 	private UserRepo userRepo;
 	
 	public List<UserDto> getAllUsers() {
-		return userRepo.findAll().stream()
-				.map(user -> {
-					UserDto dto = new UserDto();
-					dto.setUsername(user.getUsername());
-					dto.setFullName(user.getFirstName() + " " + user.getLastName().toUpperCase());
-					dto.setActive(user.getDeactivationDate() == null);
-					return dto;
-				})
-				.collect(toList());
+		return userRepo.findAll().stream().map(this::toDto).collect(toList());
+	}
+
+	private UserDto toDto(User user) {
+		UserDto dto = new UserDto();
+		dto.setUsername(user.getUsername());
+		dto.setFullName(user.getFirstName() + " " + user.getLastName().toUpperCase());
+		dto.setActive(user.getDeactivationDate() == null);
+		return dto;
 	}
 }
 
