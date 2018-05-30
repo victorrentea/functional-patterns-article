@@ -8,6 +8,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 import lombok.Data;
 
@@ -19,17 +21,21 @@ class ProductService {
 	private ProductRepo productRepo;
 
 	public List<Product> getFrequentOrderedProducts(List<Order> orders) {
-		return getProductCountsOverTheLastYear(orders).entrySet().stream()
+		List<Long> hiddenProductIds = productRepo.getHiddenProductIds();
+		Predicate<Product> productIsNotHidden = p -> !hiddenProductIds.contains(p.getId());
+		Stream<Product> frequentProducts = getProductCountsOverTheLastYear(orders).entrySet().stream()
 				.filter(e -> e.getValue() >= 10)
-				.map(Entry::getKey)
+				.map(Entry::getKey);
+		return frequentProducts
 				.filter(Product::isNotDeleted)
-				.filter(p -> !productRepo.getHiddenProductIds().contains(p.getId()))
+				.filter(productIsNotHidden)
 				.collect(toList());
 	}
 
 	private Map<Product, Integer> getProductCountsOverTheLastYear(List<Order> orders) {
+		Predicate<Order> inThePreviousYear = o -> o.getCreationDate().isAfter(LocalDate.now().minusYears(1));
 		return orders.stream()
-				.filter(o -> o.getCreationDate().isAfter(LocalDate.now().minusYears(1)))
+				.filter(inThePreviousYear)
 				.flatMap(o -> o.getOrderLines().stream())
 				.collect(groupingBy(OrderLine::getProduct, summingInt(OrderLine::getItemCount)));
 	}
