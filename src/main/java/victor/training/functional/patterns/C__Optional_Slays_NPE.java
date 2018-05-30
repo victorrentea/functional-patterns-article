@@ -35,6 +35,7 @@ class DiscountService {
 		DiscountService discountService = new DiscountService();
 		System.out.println(discountService.getDiscountLine(new Customer(new MemberCard(60))));
 		System.out.println(discountService.getDiscountLine(new Customer(new MemberCard(10))));
+		System.out.println(discountService.getDiscountLine(new Customer()));
 	}
 }
 
