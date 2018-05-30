@@ -2,6 +2,7 @@ package victor.training.functional.patterns;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.Writer;
 import java.util.stream.Stream;
 
@@ -27,7 +28,13 @@ class OrderExporter {
 			writer.write("OrderID;Date\n");
 			repo.findByActiveTrue()
 				.map(o -> o.getId() + ";" + o.getCreationDate())
-				.forEach(writer::write);
+				.forEach(t -> {
+					try {
+						writer.write(t);
+					} catch (IOException e) {
+						throw new RuntimeException(e);
+					}
+				});
 			return file;
 		} catch (Exception e) {
 			// TODO send email notification
