@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.stream.Stream;
 
+import org.jooq.lambda.Unchecked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -28,13 +29,7 @@ class OrderExporter {
 			writer.write("OrderID;Date\n");
 			repo.findByActiveTrue()
 				.map(o -> o.getId() + ";" + o.getCreationDate())
-				.forEach(t -> {
-					try {
-						writer.write(t);
-					} catch (IOException e) {
-						throw new RuntimeException(e);
-					}
-				});
+				.forEach(Unchecked.consumer(writer::write));
 			return file;
 		} catch (Exception e) {
 			// TODO send email notification
