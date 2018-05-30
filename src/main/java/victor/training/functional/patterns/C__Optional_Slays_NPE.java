@@ -1,5 +1,10 @@
 package victor.training.functional.patterns;
 
+import static java.util.Optional.empty;
+import static java.util.Optional.of;
+
+import java.util.Optional;
+
 import lombok.Data;
 
 /* "I call it my billion-dollar mistake. 
@@ -10,22 +15,22 @@ import lombok.Data;
 
 class DiscountService {
 	public String getDiscountLine(Customer customer) {
-		Integer discount = getApplicableDiscountPercentage(customer.getMemberCard());
-		if (discount != null) {
+		Optional<Object> discount = getApplicableDiscountPercentage(customer.getMemberCard());
+		if (discount.isPresent()) {
 			return "Discount%: " + discount;
 		} else {
 			return "";
 		}
 	}
 		
-	private Integer getApplicableDiscountPercentage(MemberCard card) { 
+	private Optional<Object> getApplicableDiscountPercentage(MemberCard card) { 
 		if (card.getFidelityPoints() >= 100) {
-			return 5;
+			return of(5);
 		}
 		if (card.getFidelityPoints() >= 50) {
-			return 3;
+			return of(3);
 		}
-		return null;
+		return empty();
 	}
 		
 	// test: 60, 10, no MemberCard
