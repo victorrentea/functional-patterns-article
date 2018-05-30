@@ -11,6 +11,7 @@ import java.util.Map.Entry;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 // get the products frequently ordered during the past year
@@ -57,6 +58,7 @@ class Product {
 }
 
 @Data
+@AllArgsConstructor
 class Order {
 	private Long id;
 	private List<OrderLine> orderLines;
