@@ -17,9 +17,7 @@ interface OrderRepo extends JpaRepository<Order, Long> { // Spring Data FanClub
 	Stream<Order> findByActiveTrue(); // 1 Mln orders ;)
 }
 @Slf4j
-class OrderExporter {
-	
-	private OrderRepo orderRepo;
+abstract class FileExporter {
 	
 	public File exportFile(String fileName) throws Exception {
 		File file = new File("export/" + fileName);
@@ -33,6 +31,13 @@ class OrderExporter {
 		}
 	}
 
+	protected abstract void writeContent(Writer writer) throws IOException;
+}
+
+class OrderExporter extends FileExporter {
+	
+	private OrderRepo orderRepo;
+	
 	protected void writeContent(Writer writer) throws IOException {
 		writer.write("OrderID;Date\n");
 		orderRepo.findByActiveTrue()
@@ -41,10 +46,12 @@ class OrderExporter {
 	}
 }
 
-class UserExporter extends OrderExporter {
+class UserExporter extends FileExporter {
 
 	private UserRepo userRepo; 
 	
+	// TODO Question: How would you unit-test this function in isolation?
+	// This is what you actually want to unit test, not the infrastructural code you inherited.
 	protected void writeContent(Writer writer) throws IOException {
 		writer.write("Username;FirstName;LastName\n");
 		userRepo.findAll().stream()
