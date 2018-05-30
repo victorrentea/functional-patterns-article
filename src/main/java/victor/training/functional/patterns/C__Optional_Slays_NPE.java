@@ -2,6 +2,7 @@ package victor.training.functional.patterns;
 
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
+import static java.util.Optional.ofNullable;
 
 import java.util.Optional;
 
@@ -15,7 +16,8 @@ import lombok.Data;
 
 class DiscountService {
 	public String getDiscountLine(Customer customer) {
-		return getApplicableDiscountPercentage(customer.getMemberCard())
+		return customer.getMemberCard()
+				.map(card -> getApplicableDiscountPercentage(card))
 				.map(d -> "Discount%: " + d)
 				.orElse("");
 	}
@@ -54,8 +56,8 @@ class Customer {
 	public Customer(MemberCard profile) {
 		this.memberCard = profile;
 	}
-	public MemberCard getMemberCard() {
-		return memberCard;
+	public Optional<MemberCard> getMemberCard() {
+		return ofNullable(memberCard);
 	}
 }
 
